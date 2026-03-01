@@ -10,6 +10,7 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     imageUrl: v.optional(v.string()),
+    lastSeen: v.optional(v.number()),
   }).index("by_clerk_id", ["clerkId"]),
   conversations: defineTable({
     participantIds: v.array(v.id("users")),

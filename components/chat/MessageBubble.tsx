@@ -13,7 +13,7 @@ interface MessageBubbleProps {
   onReact: (messageId: string, emoji: string) => Promise<void>;
 }
 
-const QUICK_REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🤔"];
+const QUICK_REACTIONS = ["👍", "🔥", "😂", "😮", "😢", "🤔"];
 
 export default function MessageBubble({
   message,

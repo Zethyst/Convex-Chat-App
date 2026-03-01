@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation, QueryCtx, MutationCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { isUserOnline } from "./presence";
 
 // Helper to get current user's Convex ID from Clerk identity (for queries - returns null if not found)
 async function getCurrentUserIdOrNull(ctx: QueryCtx): Promise<Id<"users"> | null> {
@@ -25,21 +26,22 @@ async function getCurrentUserId(ctx: MutationCtx): Promise<Id<"users">> {
     .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
     .unique();
 
-  // If user doesn't exist, create them (handles race condition)
-  if (!user) {
-    const clerkId = identity.subject;
-    const name = typeof identity.name === "string" ? identity.name : "Unknown";
-    const email = typeof identity.email === "string" ? identity.email : "";
-    const imageUrl = typeof identity.picture === "string" ? identity.picture : undefined;
+    // If user doesn't exist, create them (handles race condition)
+    if (!user) {
+      const clerkId = identity.subject;
+      const name = typeof identity.name === "string" ? identity.name : "Unknown";
+      const email = typeof identity.email === "string" ? identity.email : "";
+      const imageUrl = typeof identity.picture === "string" ? identity.picture : undefined;
 
-    const userId = await ctx.db.insert("users", {
-      clerkId,
-      name,
-      email,
-      imageUrl,
-    });
-    return userId;
-  }
+      const userId = await ctx.db.insert("users", {
+        clerkId,
+        name,
+        email,
+        imageUrl,
+        lastSeen: Date.now(), // Set initial lastSeen when user is created
+      });
+      return userId;
+    }
 
   return user._id;
 }
@@ -90,7 +92,7 @@ export const list = query({
           participantIds: conv.participantIds.map((id) => id as string),
           participantName: otherParticipant.name,
           participantAvatar: otherParticipant.imageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(otherParticipant.name)}`,
-          participantOnline: true, // TODO: Implement online status
+          participantOnline: isUserOnline(otherParticipant.lastSeen),
           lastMessage: lastMessage?.content || "",
           lastMessageTime: conv.lastMessageTime,
           unreadCount: unread?.count || 0,

@@ -12,6 +12,7 @@ import type * as conversations from "../conversations.js";
 import type * as debugToken from "../debugToken.js";
 import type * as messages from "../messages.js";
 import type * as myFunctions from "../myFunctions.js";
+import type * as presence from "../presence.js";
 import type * as typing from "../typing.js";
 import type * as users from "../users.js";
 
@@ -26,6 +27,7 @@ declare const fullApi: ApiFromModules<{
   debugToken: typeof debugToken;
   messages: typeof messages;
   myFunctions: typeof myFunctions;
+  presence: typeof presence;
   typing: typeof typing;
   users: typeof users;
 }>;

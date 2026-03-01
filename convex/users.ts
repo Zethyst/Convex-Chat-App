@@ -48,7 +48,12 @@ export const getOrCreate = mutation({
 
     if (existing) {
       console.log("[getOrCreate] Updating existing user:", existing._id);
-      await ctx.db.patch(existing._id, { name, email, imageUrl });
+      await ctx.db.patch(existing._id, { 
+        name, 
+        email, 
+        imageUrl,
+        lastSeen: Date.now(), // Update lastSeen when user logs in
+      });
       console.log("[getOrCreate] ✅ User updated successfully");
       return existing._id;
     }
@@ -59,6 +64,7 @@ export const getOrCreate = mutation({
       name,
       email,
       imageUrl,
+      lastSeen: Date.now(), // Set initial lastSeen when user is created
     });
     console.log("[getOrCreate] ✅ New user created:", userId);
     return userId;

@@ -21,7 +21,7 @@ export default function LoginForm({
         routing="path"
         path="/"
         signInUrl="/"
-        afterSignUpUrl="/chat"
+        fallbackRedirectUrl="/chat"
       />
     );
   }
@@ -32,8 +32,7 @@ export default function LoginForm({
       routing="path"
       path="/"
       signUpUrl="/?mode=signup"
-      afterSignInUrl="/chat"
-      afterSignUpUrl="/chat"
+      fallbackRedirectUrl="/chat"
     />
   );
 }
